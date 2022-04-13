@@ -28,27 +28,16 @@ architecture Behavioral of ram_example is
 
 
 begin
-    -- Divide the master clock (100Mhz) down to a lower frequency.
-    process (clk)
-    begin
-        if clk = '1' and clk'Event then
-            clkdiv <= clkdiv + 1;
-        end if;
-    end process;
-    cclk <= clkdiv(24);
-    clk_led <= cclk;
-
-
-    read_write: process(cclk)
+    read_write: process(clk)
     begin
         address <= to_integer(unsigned(address_bin)); --var?
 
-        if(rising_edge(cclk)) then
-            if(we_bin="01") then
+        if(rising_edge(clk)) then
+            if(we_bin="10") then
                 ram(address) <= data_i;
                 data_o <= "00000000";
 
-            elsif (we_bin="10") then
+            elsif (we_bin="01") then
                 data_o <= ram(address);
 
             else
