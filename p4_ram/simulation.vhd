@@ -58,26 +58,90 @@ architecture Behavioral of ram_sim is
 begin
 
     UUT: ram_example port map (we_bin(0) => r_data, we_bin(1) => w_data, address_bin => address, clk => clk, data_i => data_in, data_o => data_out);
-    
-    process
+
+    clock: process
     begin
-        clk <= '0';
-        wait for clk_period/2;
-        clk <= '1';
-        wait for clk_period/2;
-    end process;
-    
-    process
-    
+        if not StopClock then
+            clk <= '0';
+            wait for clk_period/2;
+            clk <= '1';
+            wait for clk_period/2;
+        end if;
+    end process clock;
+
+    rw_data: process
     begin
---        while not StopClock loop
-            r_data <= '0';
-            w_data <= '0';
-            address <= "01";
-            wait for 10ns;
-            address <= "10";
+        if not StopClock then
+            wait for 21ns;
             w_data <= '1';
---        end loop;
-    end process;
+            wait for 40ns;
+            w_data <= '0';
+            r_data <= '1';
+            wait for 80 ns;
+        end if; 
+    end process rw_data;
+    
+    adress_change: process
+    begin
+        if not StopClock then
+           wait for 31ns;
+           
+           address <= "01";
+           wait for 10ns;
+           
+           address <= "10";
+           wait for 10ns;
+           
+           address <= "11";
+           wait for 20ns;
+           
+           address <= "00";
+           wait for 10ns;
+           
+           address <= "01";
+           wait for 10ns;
+           
+           address <= "10";
+           wait for 10ns;
+           
+           address <= "11";
+           wait for 30ns;
+           
+        end if; 
+    end process adress_change;
+    
+    data_in_proc: process
+    begin
+        if not StopClock then
+            wait for 11ns;
+            
+            data_in <= x"11";  
+            wait for 10ns;
+            
+            data_in <= x"55";  
+            wait for 10ns;
+            
+            data_in <= x"aa";  
+            wait for 10ns;
+            
+            data_in <= x"0f";  
+            wait for 10ns;
+            
+            data_in <= x"f0";  
+            wait for 30ns;
+            
+            data_in <= x"aa";  
+            wait for 50ns;
+            
+            
+        end if;
+    
+    end process data_in_proc;
+    
+    stop_count: process
+    begin
+        wait for 140ns;
+        StopClock <= true;
+    end process stop_count;
 
 end Behavioral;
