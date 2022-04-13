@@ -140,8 +140,10 @@ begin
     
     stop_count: process
     begin
-        wait for 140ns;
-        StopClock <= true;
+        if not StopClock then
+            wait for 140ns;
+            StopClock <= true;
+        end if;
     end process stop_count;
 
 end Behavioral;
