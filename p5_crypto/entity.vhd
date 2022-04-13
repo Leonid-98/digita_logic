@@ -4,7 +4,14 @@ USE ieee.numeric_std.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 
+
 entity crypto is
+    generic (
+        ror_val: integer := 2;
+        rol_val: integer := 1;
+        key_len: integer := 8
+    );
+    
     port (clk : in std_logic;
 
          data_in : in std_logic_vector(6 downto 0); 
@@ -36,12 +43,13 @@ begin
     begin
         data_and_parity(7) <= data_in(0);
         data_and_parity(6 downto 0) <= data_in;
+        
+        
+        data_and_parity <= data_and_parity((ror_val - 1) downto 0) & data_and_parity(7 downto ror_val); 
+               
     end process parity_calculator;
     
+    data_out_decryp <= data_and_parity;
     
-    
-
-
-
 
 end Behavioral;
