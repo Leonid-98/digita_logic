@@ -98,6 +98,27 @@ end Moore_arhit;
 ----------------------------------------------------------------------------------
 
 
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 04/20/2022 11:25:45 AM
+-- Design Name: 
+-- Module Name: sim - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -137,26 +158,29 @@ clock: process
     
 main: process
     begin
-       Resett <= '1';
-       Sisend <= '1';
-       Sisend2 <= '1'; 
-       wait for 20ns;
-       
        Resett <= '0';
        Sisend <= '1';
        Sisend2 <= '1'; 
-       wait for 20ns;
-       
+       wait for 10ns;
        Resett <= '1';
-       Sisend <= '0';
-       Sisend2 <= '0'; 
-       wait for 20ns;
+       wait for 10ns;
        
-       Resett <= '0';
+       Sisend <= '1';
+       Sisend2 <= '1'; 
+       wait for 10ns;
+       wait for 10ns;
+       
        Sisend <= '0';
        Sisend2 <= '0'; 
-       wait for 20ns;
+       wait for 10ns;
+       wait for 10ns;
+       
+       Sisend <= '0';
+       Sisend2 <= '0'; 
+       wait for 10ns;
+       wait for 10ns;
                
     end process main;
 
 end Behavioral;
+
