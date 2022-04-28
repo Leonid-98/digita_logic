@@ -35,8 +35,8 @@ architecture Behavioral of vga is
     signal pixel_x: integer := 0;
     signal pixel_y: integer := 0;
 
-    constant display_x: integer := width + v_pulse_width + v_front_porch + v_back_porch;
-    constant display_y: integer := height + h_pulse_width + h_front_porch + h_back_porch;
+    constant display_x: integer := width + h_front_porch + h_pulse_width + h_back_porch;
+    constant display_y: integer := height + v_front_porch + v_pulse_width + v_back_porch;
 
     signal clk_div: std_logic_vector(1 downto 0) := "00";
     signal clk_25: std_logic;  -- slow clock 25 MHz
@@ -54,10 +54,10 @@ begin
     pixel_move: process (clk_25)
     begin
         if rising_edge(clk_25) then
-            if pixel_x = display_x - 1 then
+            if pixel_x = (display_x - 1) then
                 pixel_x <= 0;
                 ----
-                if pixel_y = display_y - 1 then
+                if pixel_y = (display_y - 1) then
                     pixel_y <= 0;
                 else
                     pixel_y <= pixel_y + 1;
@@ -73,7 +73,7 @@ begin
     h_sync: process (clk_25)
     begin
         if rising_edge(clk_25) then
-            if (pixel_x >= (width + h_front_porch) and pixel_x < (display_x - h_back_porch)) then
+            if (pixel_x >= (width + h_front_porch - 1) and (pixel_x < (display_x - h_back_porch - 1))) then
                 HSYNC <= '0';
             else
                 HSYNC <= '1';
@@ -85,7 +85,7 @@ begin
     v_sync: process (clk_25)
     begin
         if rising_edge(clk_25) then
-            if (pixel_y >= (height + v_front_porch) and pixel_y < (display_y - v_back_porch)) then
+            if (pixel_y >= (height + v_front_porch - 1) and (pixel_y < (display_y - v_back_porch - 1))) then
                 VSYNC <= '0';
             else
                 VSYNC <= '1';
