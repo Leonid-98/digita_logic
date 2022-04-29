@@ -41,7 +41,7 @@ architecture Behavioral of vga is
     signal clk_25: std_logic;  -- slow clock 25 MHz
 
 
-    component BRAM PORT(
+    component vga_memory PORT(
             clka : IN STD_LOGIC;
             wea : IN STD_LOGIC;
             addra : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -58,7 +58,7 @@ architecture Behavioral of vga is
 
 
 begin
-    VGA: BRAM PORT MAP (
+    test1: vga_memory PORT MAP (
             clka => sig_clka,
             wea => sig_wea,
             addra => sig_addra,
