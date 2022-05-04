@@ -18,26 +18,22 @@ entity vga is
 end vga;
 
 architecture Behavioral of vga is
+    signal clk_div: std_logic_vector(1 downto 0) := "00";
+    signal clk_25: std_logic;  -- slow clock 25 signal
+
     constant width: integer := 640;
     constant height: integer := 480;
-    -- 25MHz pixel clock and 60Hz vertical refresh
     constant v_pulse_width: integer := 2;
     constant v_front_porch: integer := 10;
     constant v_back_porch: integer := 29;
-
     constant h_pulse_width: integer := 96;
     constant h_front_porch: integer := 16;
     constant h_back_porch: integer := 48;
-
-    signal pixel_x: integer := 0;
-    signal pixel_y: integer := 0;
-    signal pixel_count: integer := 0;
-
     constant display_x: integer := width + h_front_porch + h_pulse_width + h_back_porch;
     constant display_y: integer := height + v_front_porch + v_pulse_width + v_back_porch;
 
-    signal clk_div: std_logic_vector(1 downto 0) := "00";
-    signal clk_25: std_logic;  -- slow clock 25 MHz
+    signal pixel_x: integer := 0;
+    signal pixel_y: integer := 0;
 
     -- BRAM constants
     constant img_width: integer := 256;
@@ -82,19 +78,16 @@ begin
         if rising_edge(clk_25) then
             if pixel_x = (display_x - 1) then
                 pixel_x <= 0;
-                ----
                 if pixel_y = (display_y - 1) then
                     pixel_y <= 0;
                 else
                     pixel_y <= pixel_y + 1;
                 end if;
-            ----
             else
                 pixel_x <= pixel_x + 1;
-                pixel_count <= pixel_count + 1;
             end if;
         end if;
-    end process pixel_move;
+    end process pixel_move;   
 
     h_sync: process (clk_25)
     begin
@@ -122,32 +115,21 @@ begin
     show_color: process (clk_25)
     begin
         if rising_edge(clk_25) then
-            if pixel_x < width and pixel_y < height then
-                if pixel_x < img_width and pixel_y < img_height then
-                    -- image area;
-                    RED <= douta(11 downto 8);
-                    GRN <= douta(7 downto 4);
-                    BLU <= douta(3 downto 0);
-                    addra <= STD_LOGIC_VECTOR(unsigned(addra)+1);
-                    if pixel_count >= img_size then
-                        addra <= (others => '0');
-                        pixel_count <= 0;
-                    end if;
-                    
-                else
-                    -- background area;
-                    RED <= RED_IN;
-                    GRN <= GRN_IN;
-                    BLU <= BLU_IN;
-                end if;
+            if pixel_x < img_width and pixel_y < img_height then
+                BLU <= douta(11 downto 8);
+                GRN <= douta(7 downto 4);
+                RED <= douta(3 downto 0);
+                addra <= addra + "1";
+            elsif pixel_x < width and pixel_y < height then
+                RED <= RED_IN;
+                GRN <= GRN_IN;
+                BLU <= BLU_IN;
             else
-                -- blanking area;
-                addra <= (others => '0');
                 RED <= "0000";
                 GRN <= "0000";
                 BLU <= "0000";
-
             end if;
+
         end if;
     end process show_color;
 
